@@ -1,0 +1,43 @@
+COPYRIGHT AND LICENSE
+
+Copyright 2018 Signature Science, LLC
+
+SIANN is free software distributed under the GNU General Public License, version 3. 
+
+
+PURPOSE
+
+Strain Identification by Alignment to Near Neighbors (SIANN) quickly processes 
+metagenome sequences to identify the best matches among a targeted set of organisms. 
+
+
+DEPENDENCIES
+
+SIANN is written in Python and requires the use of the following tools during execution:
+
+-Python 2.7
+    -https://www.python.org
+    -Copyright © 2001-2018 Python Software Foundation
+    -Licensed under the Python Software Foundation License
+
+-SciPy (stats)
+    -https://www.scipy.org
+    -Copyright © 2018 SciPy Developers
+    -Licensed under https://www.scipy.org/scipylib/license.html
+
+SIANN uses the following tools to format its reference database:
+
+-Bowtie2
+    -https://github.com/BenLangmead/bowtie2
+    -Written by Ben Langmead <langmea@cs.jhu.edu> https://github.com/BenLangmead/bowtie2/blob/master/AUTHORS
+    -Licensed under the GNU General Public License, version 3
+
+-GNU Parallel
+    -https://www.gnu.org/software/parallel/
+    -Copyright © 2010 Free Software Foundation, Inc.
+    -Licensed under the GNU General Public License, version 3
+
+-MUMmer (nucmer and show-coords)
+    -https://github.com/mummer4/mummer
+    -Copyright under https://github.com/mummer4/mummer/blob/master/COPYRIGHT
+    -Licensed under the Artistic License, version 2.0
