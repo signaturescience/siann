@@ -41,13 +41,17 @@ Creating a reference database is a bit more involved. The following executables 
 First, a set of reference genomes must be assembled, all in their own FASTA file named for the organism (as described above) in a folder named raw_genomes inside a folder named for the database. So, to create a database called ‘database,’ first create siann/database then create siann/database/raw_genomes and then add the FASTA files into that folder. Finally, execute `siann/scripts/make_database.sh database`. This will do many things, such as checking to make sure that there are no duplicate names, checking to make sure there are no empty sequences, whether such a database already exists, etc. Check the documentation inside SIANN/scripts/make_database.sh for more details. 
 The process of making a database does two things. The trivial step is to create a bowtie database index. The harder step is to establish how much of each genome is species-specific and how much is strain-specific by aligning every genome against each other. The crucial pieces of the resulting database is a bowtie index and a file called all.null, which contains the proportion of each reference that is species- and strain-specific. Without those files, the database cannot be used. 
 
-## requirements
+## Requirements
 Can be installed with conda, using python2 (for now)
 
 `conda create -n siann -c bioconda bowtie2 parallel mummer scipy python=2`
 
+or:
 
-## Dataase Construction
+`conda create -n siann -c bioconda siann`
+
+
+## Database Construction
 ### Structure
 Database directory can be specified at time of construction.  the database MUST contain a subdirectory named:
 ```
