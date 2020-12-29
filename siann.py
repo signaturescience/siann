@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 
 import time
 import argparse
@@ -6,6 +6,7 @@ import os
 from subprocess import Popen, PIPE
 from scipy import stats
 from multiprocessing import Process
+import os.path as path
  
 '''
 	Go through the SAM once, write out the strain unique and species unique, also keep track of the number of reads per strain
@@ -23,11 +24,13 @@ def count_and_split(fo_base, sam_in, output_reads=False):
 		species_reads = ""
 	
 		for line in sam_in:
+			#print(line)
+			#print(line[0],"\n")
 			if line[0] == "@": #Marks SAM header lines
 				fo_strain.write(line)
 				fo_species.write(line)
 			else:
-				name=line.split()[1]
+				name=line.split("\t")[1]
 				strain=name.split('.')
 				del strain[-1]
 				strain = '.'.join(strain) #Remove the final '.1', etc
@@ -150,7 +153,7 @@ def file_to_list(fp, col):
 			out.extend([line.strip()])
 		else:
 			line = line.strip()
-			out.extend([line.split()[col]])
+			out.extend([line.split("\t")[col]])
 	fi.close()
 	return(out)
 
@@ -210,10 +213,12 @@ def executive_summary(out_base, null_file, siann_folder, fp_in):
 		#Convert to dictionary
 		species = {}
 		for q in range(0, len(species_names)):
+			#print(species_names[q])
 			species[species_names[q]] = {'val':float(species_scores[q])} 
 	
 		#Calculate the null for each species
 		for x in species.keys():
+			#print(x)
 			#Get all the species-nulls for each strain belonging to this species
 			nulls = [strain[y]['species_null'] for y in strain.keys() if strain[y]['species'] == x]
 			species[x]['null'] = sum(nulls)/len(nulls)
@@ -299,22 +304,22 @@ def markdown(fp_in, fp_out, siann_folder):
 def run_siann(fasta, out, db, threads, report, output_reads, keep_sam):
 	#Keep track of a set of files to be deleted
 	to_delete=[]
-	siann_folder = os.path.abspath(__file__) #The scripts directory, which is in the same folder as the folder containing the raw genomes and the default database
-	siann_folder = siann_folder.split('/')
-	siann_folder = siann_folder[0:(len(siann_folder)-2)]
-	siann_folder = '/'.join(siann_folder)
-	print "Input: " + " & ".join([x.replace('_', ' ') for x in fasta])
-	print "Output: " + out
-	if len(fasta) is 1: #Only one set of reads specified
+	siann_folder = os.path.dirname(os.path.abspath(__file__)) #The scripts directory, which is in the same folder as the folder containing the raw genomes and the default database
+	#siann_folder = siann_folder.split('/')
+	#siann_folder = siann_folder[0:(len(siann_folder)-2)]
+	#siann_folder = '/'.join(siann_folder)
+	print("Input: " + " & ".join([x.replace('_', ' ') for x in fasta]))
+	print("Output: " + out)
+	if len(fasta) == 1: #Only one set of reads specified
 		if len(fasta[0].split())>1:
-			print "Please do not specify an input path with whitespaces"
+			print("Please do not specify an input path with whitespaces")
 			exit()
 	else: #Two reads files specified
 		if len(fasta[0].split())>1 or len(fasta[1].split())>1:
-			print "Please do not specify an input path with whitespaces"
+			print("Please do not specify an input path with whitespaces")
 			exit()
 	if len(out.split())>1:
-		print "Please do not specify an output path with whitespaces"
+		print("Please do not specify an output path with whitespaces")
 		exit()
 	if threads == 0:
 		try:
@@ -324,7 +329,7 @@ def run_siann(fasta, out, db, threads, report, output_reads, keep_sam):
 		except Exception:
 			print("Popen error when evaluating thread parameters")
 		threads=str(wc_process.communicate()[0]).strip()
-	print "Threads: " + threads
+	print("Threads: " + threads)
 
 	#Find number of alignments to make per read
 	database=siann_folder + "/"+db
@@ -342,7 +347,7 @@ def run_siann(fasta, out, db, threads, report, output_reads, keep_sam):
 	except IOError:
 		print("Error opening/handling " + database+ "/all.txt" )
 	nAlignments = str(max(sps_count)*2)
-	print "Alignments: " + nAlignments
+	print("Alignments: " + nAlignments)
 
 	#Check for a FASTA or FASTQ file
 	read_type = 'X'
@@ -354,16 +359,19 @@ def run_siann(fasta, out, db, threads, report, output_reads, keep_sam):
 	if suffix == "fq" or suffix == "fastq": 
 		read_type='-q'
 	if read_type == 'X':
-		print "Read file does not end in fasta, fa, fastq, or fq, with or without gz. Exiting."
+		print("Read file does not end in fasta, fa, fastq, or fq, with or without gz. Exiting.")
 		exit()
 
 	#Check how many read files were specified, 1 or 2
 	if len(fasta) == 1:
-		cmd = [siann_folder+'/bin/bowtie2', '-k', nAlignments, '-p', threads, '--very-fast', '--score-min', 'L,-0.1,-0.1', read_type, '-x', database+'/db', '-U', fasta[0], '2>/dev/null']
+		#assume commands are in $PATH
+		cmd = ['bowtie2', '-k', nAlignments, '-p', threads, '--very-fast', '--score-min', 'L,-0.1,-0.1', read_type, '-x', database+'/db', '-U', fasta[0]]#, '2>/dev/null']
 	else:
-		cmd = [siann_folder+'/bin/bowtie2', '-k', nAlignments, '-p', threads, '--very-fast', '--score-min', 'L,-0.1,-0.1', read_type, '-x', database+'/db', '-1', fasta[0], '-2', fasta[1], '2>/dev/null']
+		cmd = ['bowtie2', '-k', nAlignments, '-p', threads, '--very-fast', '--score-min', 'L,-0.1,-0.1', read_type, '-x', database+'/db', '-1', fasta[0], '-2', fasta[1]] #, '2>/dev/null']
+	#print(" ".join(cmd))
+	FNULL = open(os.devnull, 'w')
 	try:
-		bowtie = Popen(cmd, stdout=PIPE)
+		bowtie = Popen(cmd, stdout=PIPE, stderr=FNULL)
 	except OSError:
 		print(' '.join(cmd))
 		print("Failed command above")
@@ -401,6 +409,7 @@ def run_siann(fasta, out, db, threads, report, output_reads, keep_sam):
 		tab_to_fasta(out+".species.tab", out+".species.fasta")
 	for x in to_delete:
 		os.remove(x)
+	FNULL.close()
 
 
 def tab_to_fasta(tab_in, fasta_out):
@@ -442,7 +451,7 @@ if __name__=="__main__":
 
 	args = vars(parser.parse_args())
 	#Run without GUI
-	if args['paired'] is not 'none':
+	if args['paired'] != 'none':
 		reads=[args['reads'], args['paired']]
 	else:
 		reads=[args['reads']]

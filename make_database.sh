@@ -11,17 +11,22 @@ hash show-coords 2>/dev/null || { echo >&2 "I require show-coords but it's not i
 
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )" #The scripts directory, which is in the same folder as the folder containing the raw genomes, database, etc.
-cd $DIR/.. 
+#cd $DIR/.. 
 nproc=24 #Number of concurrent processes to run
 
-if (( ${#1} > 0 )); then #Optionally specify the database folder
-	folder="$PWD/$1"
-else
-	folder="$DIR/../database"
-fi
-if [ ! -d $folder ]; then echo "Please place the raw FASTA files in the desired output folder in a subfolder called 'raw_genomes'"; exit; fi 
+#if (( ${#1} > 0 )); then #Optionally specify the database folder
+#	folder="$PWD/$1"
+#else
+#	folder="$DIR/../database"
+#fi
+folder="data/db"
+if [ ! -d $folder ]; then 
+echo "$folder not found"
+echo "Please place the raw FASTA files in the desired output folder in a subfolder called 'raw_genomes'"; exit; fi 
 raw_genomes=$folder/raw_genomes
-if [ ! -d $raw_genomes ]; then echo "Please place the raw FASTA files in the desired output folder in a subfolder called 'raw_genomes'"; exit; fi 
+if [ ! -d $raw_genomes ]; then 
+echo "$raw_genomes not found"
+echo "Please place the raw FASTA files in the desired output folder in a subfolder called 'raw_genomes'"; exit; fi 
 
 all=$folder/all.fasta #Put all of the sequences in a single file (renamed for the organism)
 names=$folder/all.txt #List of names
