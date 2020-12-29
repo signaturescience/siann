@@ -7,7 +7,13 @@ from subprocess import Popen, PIPE
 from scipy import stats
 from multiprocessing import Process
 import os.path as path
- 
+
+'''
+Variables of importance
+'''
+VERSION=1.0
+
+
 '''
 	Go through the SAM once, write out the strain unique and species unique, also keep track of the number of reads per strain
 '''
@@ -439,21 +445,32 @@ def confidence(raw):
 
 
 if __name__=="__main__":
-	parser = argparse.ArgumentParser(description="usage: %prog [options] input output", epilog="This program is the property of Signature Science, LLC, and cannot be used without their permission. Please contact sminot@signaturescience.com for more details (C) 2013, Signature Science, LLC")
+	parser = argparse.ArgumentParser(description="usage: %prog [options] input output", epilog="This program is the property of Signature Science, LLC, and cannot be used without their permission. Please contact mscholz@signaturescience.com for more details (C) 2020, Signature Science, LLC")
 	parser.add_argument("-d", "--db", default="database", help="database of reference genomes to use")
 	parser.add_argument("-t", "--threads", default=0, help="number of threads to use for alignment (all by default)")
-	parser.add_argument("--paired", default="none", help="second set of reads in pair (if any)")
+	parser.add_argument("-p","--paired", default="none", help="second set of reads in pair (if any)")
 	parser.add_argument("--report", action='store_false', help="turn off the generation of a report")
 	parser.add_argument("--reads_out", action='store_true', help="turn on the output of species- and strain-specific reads")
 	parser.add_argument("--keep_sam", action='store_true', help="retain the aligned reads in SAM format")
-	parser.add_argument("--reads", help="Set of reads (FASTQ/FASTA) to be processed", required=True)
+	parser.add_argument("-r", "--reads", help="Set of reads (FASTQ/FASTA) to be processed", required=True)
 	parser.add_argument("--out", help="Prefix for output files", required=True)
+	parser.add_argument("-v","--version", help="print version", action='version', version="siann.py version="+str(VERSION))
+	#parser.add_argument("--help", help="print this helpful message", action='store_true')
 
 	args = vars(parser.parse_args())
 	#Run without GUI
 	if args['paired'] != 'none':
-		reads=[args['reads'], args['paired']]
-	else:
+		if os.path.exists(args['reads']) and os.path.exists(args['paired']):
+			reads=[args['reads'], args['paired']]
+		else:
+			print("could not find one of {R1} or {R2}, please check your inputs".format(R1=args['reads'], R2=args['paired']) )
+			parser.print_usage()
+			exit(1)
+	elif os.path.exists(args['reads']):
 		reads=[args['reads']]
+	else:
+		print("could not find {R1}, please check your inputs".format(R1=args['reads']))
+		parser.print_usage()
+		exit(1)
 	run_siann(reads, args['out'], args['db'], args['threads'], args['report'], args['reads_out'], args['keep_sam'])
 
