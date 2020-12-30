@@ -42,13 +42,11 @@ First, a set of reference genomes must be assembled, all in their own FASTA file
 The process of making a database does two things. The trivial step is to create a bowtie database index. The harder step is to establish how much of each genome is species-specific and how much is strain-specific by aligning every genome against each other. The crucial pieces of the resulting database is a bowtie index and a file called all.null, which contains the proportion of each reference that is species- and strain-specific. Without those files, the database cannot be used. 
 
 ## Requirements
-Can be installed with conda, using python2 (for now)
-
-`conda create -n siann -c bioconda bowtie2 parallel mummer scipy python=2`
-
-or:
+1) Can be installed with conda, using python2 (for now)
 
 `conda create -n siann -c bioconda siann`
+
+2) Alternatively, you can install all requirements, and install the latest version
 
 
 ## Database Construction
