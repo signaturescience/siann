@@ -31,7 +31,7 @@ SIANN is intended to be used to determine lineage of a member of a metagenomic c
 3) Format DB:
 ```
 cd ../../
-./make_database.sh
+make_database.sh
 ```
    
 # Test with data
@@ -41,7 +41,7 @@ mkdir data/reads
 cd data/reads
 wget https://osf.io/7cbvh/download 
 cd ../../
-./siann.py -d data/db --reads data/reads/HMP_even.trimQ2.fastq.gz --out siann_test_1 -t 20
+siann.py -d data/db --reads data/reads/HMP_even.trimQ2.fastq.gz --out siann_test_1 -t 20
 ```
 2) Data output will be in directory.
 
