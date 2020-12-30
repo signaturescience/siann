@@ -2,12 +2,13 @@
 ## Background
 SIANN is intended to be used to determine lineage of a member of a metagenomic community at the species or strain level.  It is expected that alternative methods (e.g. METSCALE) have been used to classify the community at the genus or species level.  Once the species has been determined, if further detail is desired, SIANN can be used in a 2step process:
 ## Database construction
-1) Download all finished isolates of bacterial species to be classified. 
-2) Place all downloaded genomes (named Genus_Species_Strain.fasta) into a subfolder named data\db\raw_genomes
+
+1) Place all downloaded genomes (named Genus_Species_Strain.fasta) into a subfolder named data\db\raw_genomes
   ```
   mkdir -p data\db\raw_genomes 
   cd data\db\raw_genomes
   ```
+2) Download all finished isolates of bacterial species to be classified. 
   * Downloaded references from NCBI will have to be renamed. 
   * Species with < 1000 sequenced isolates can be downloaded directly with ftp, e.g.
     *
