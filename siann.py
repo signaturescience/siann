@@ -445,7 +445,7 @@ def confidence(raw):
 
 
 if __name__=="__main__":
-	parser = argparse.ArgumentParser(description="usage: %prog [options] input output", epilog="This program is the property of Signature Science, LLC, and cannot be used without their permission. Please contact git@signaturescience.com for more details (C) 2020, Signature Science, LLC")
+	parser = argparse.ArgumentParser(description="usage: %prog [options] input output", epilog="Please contact git@signaturescience.com with questions about this tool (C) 2020, Signature Science, LLC")
 	parser.add_argument("-d", "--db", default="database", help="database of reference genomes to use")
 	parser.add_argument("-t", "--threads", default=0, help="number of threads to use for alignment (all by default)")
 	parser.add_argument("-p","--paired", default="none", help="second set of reads in pair (if any)")
