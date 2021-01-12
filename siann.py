@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python2
 
 import time
 import argparse
@@ -338,7 +338,8 @@ def run_siann(fasta, out, db, threads, report, output_reads, keep_sam):
 	print("Threads: " + threads)
 
 	#Find number of alignments to make per read
-	database=siann_folder + "/"+db
+	#database=siann_folder + "/"+db
+	database=db
 	sps = []
 	sps_count = []
 	try:
