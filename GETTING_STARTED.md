@@ -31,7 +31,7 @@ SIANN is intended to be used to determine lineage of a member of a metagenomic c
 3) Format DB:
 ```
 cd ../../
-make_database.sh
+make_database.sh data/db/
 ```
    
 # Test with data
