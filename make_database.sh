@@ -3,7 +3,6 @@
 #Requires bowtie2 in the path
 #Make a bowtie2 database, given a set of folders of genome sequences. Each folder is named for the organism. All of the FASTA files in that folder are chromosomes or plasmids for that organism
 #Using parallel to speed things up
-
 hash bowtie2 2>/dev/null || { echo >&2 "I require bowtie2 but it's not in the path.  Aborting."; exit 1;}
 hash parallel 2>/dev/null || { echo >&2 "I require GNU parallel but it's not in the path.  Aborting."; exit 1;}
 hash nucmer 2>/dev/null || { echo >&2 "I require nucmer but it's not in the path.  Aborting."; exit 1;}
@@ -14,12 +13,12 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )" #The scripts directory, 
 #cd $DIR/.. 
 nproc=24 #Number of concurrent processes to run
 
-#if (( ${#1} > 0 )); then #Optionally specify the database folder
-#	folder="$PWD/$1"
-#else
-#	folder="$DIR/../database"
-#fi
-folder="data/db"
+if (( ${#1} > 0 )); then #Optionally specify the database folder
+	folder="$1"
+else
+	folder="./data/db"
+fi
+#folder="data/db"
 if [ ! -d $folder ]; then 
 echo "$folder not found"
 echo "Please place the raw FASTA files in the desired output folder in a subfolder called 'raw_genomes'"; exit; fi 
@@ -36,19 +35,18 @@ if [ ! -d $folder/temp ]; then mkdir $folder/temp; fi
 
 #Check to make sure that no names are duplicated
 echo "Checking for duplicated names"
-dups=""
 for f in $raw_genomes/*fasta; do f=${f#*raw_genomes/}; echo ${f%.fasta}; done > $names
-for strain in `cat $names`; do
-	if (( `grep -c $strain $names` > 1 )); then
-		dups="$dups
-`grep $strain $names`"
-	fi
-	if (( ${#dups} > 0 )); then
-		echo "Error in set of reference genome names: redundancy"
-		echo $dups
-		exit
-	fi
-done
+dups=`sort $names | uniq -c  | awk '($1>1){print $2}'`
+#for strain in `cat $names`; do
+#	if (( `grep -c $strain $names` > 1 )); then
+#		dups="$dups
+#`grep $strain $names`"
+#	fi
+if (( ${#dups} > 0 )); then
+	echo "Error in set of reference genome names: redundancy"
+	echo $dups
+	exit
+fi
 
 #Check to make sure that there aren't any empty sequences in the set of reference genomes
 echo "Checking for empty records"
