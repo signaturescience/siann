@@ -57,6 +57,10 @@ for f in $raw_genomes/*fasta; do
 		echo "Specific record: $empties"
 		exit
 	fi
+        if [ -s $f ]; then
+                echo "Empty File found in $f"
+                exit
+        fi
 done
 
 if [ -s $folder/all.null ]; then
@@ -282,11 +286,11 @@ if [ ! -s $folder/db.1.bt2 ]; then
 
 #Clean up
 #rm -r $folder/temp
-rm -f $folder/all.fasta
-rm -f $folder/*rpkm
-rm -f $folder/*tab
-rm -f format_fasta.sh
-rm -f unique_coverage.sh
+#rm -f $folder/all.fasta
+#rm -f $folder/*rpkm
+#rm -f $folder/*tab
+#rm -f format_fasta.sh
+#rm -f unique_coverage.sh
 echo "Done"
 
 exit
