@@ -194,10 +194,6 @@ def executive_summary(out_base, null_file, siann_folder, fp_in):
 
 		#Reformat as a dictionary
 		strain={}
-		print(strain_hits)
-		print( len(strain_hits))
-		print(len(strain_null))
-		return(1)
 		for q in range(0, len(strain_name)):
 			if strain_null[q] > 0:
 				print (q)
@@ -413,8 +409,8 @@ def run_siann(fasta, out, db, threads, report, output_reads, keep_sam):
 	species.start()
 	strain.join()
 	species.join()
-	#to_delete.append(out+".strain.tab")
-	#to_delete.append(out+".species.tab")
+	to_delete.append(out+".strain.tab")
+	to_delete.append(out+".species.tab")
 
 	if report:
 		executive_summary(out, database + '/all.null', siann_folder, fasta)
