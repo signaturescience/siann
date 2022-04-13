@@ -57,7 +57,7 @@ for f in $raw_genomes/*fasta; do
 		echo "Specific record: $empties"
 		exit
 	fi
-        if [ -s $f ]; then
+        if [ ! -s $f ]; then
                 echo "Empty File found in $f"
                 exit
         fi
